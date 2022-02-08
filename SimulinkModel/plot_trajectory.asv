@@ -1,0 +1,7 @@
+close all
+data = load("simresults/run1.mat");
+
+figure(1)
+hold on;
+scatter(rtx,rty)
+scatter(data.run(2).)
