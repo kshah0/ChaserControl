@@ -8,12 +8,12 @@ refTraj = [rtt rtx rty];
 t = [0:.01:16];
 
 %% Model Formulation for MPC
-controller = nlmpc(3,3,2); % npy 2 or 3?
-controller.Model.StateFcn = "unicycleDynamics";
-controller.Model.OutputFcn = @(x,u,Ts) [x(1); x(2); x(3)];
-controller.Ts = 1;
-controller.PredictionHorizon = 5;
-controller.Model.NumberOfParameters = 0;
+% controller = nlmpc(3,3,2); % npy 2 or 3?
+% controller.Model.StateFcn = "unicycleDynamics";
+% controller.Model.OutputFcn = @(x,u,Ts) [x(1); x(2); x(3)];
+% controller.Ts = 1;
+% controller.PredictionHorizon = 5;
+% controller.Model.NumberOfParameters = 0;
 % controller.Optimization.RunAsLinearMPC = 'off';
 % controller.Optimization.ReplaceStandardCost = false;
 % Control Constraints
