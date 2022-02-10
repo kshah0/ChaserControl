@@ -8,25 +8,26 @@ refTraj = [rtt rtx rty];
 t = [0:.01:16];
 
 %% Model Formulation for MPC
-controller = nlmpc(3,2,2); % npy 2 or 3?
-controller.Model.StateFcn = "unicycleDynamics";
-controller.Model.OutputFcn = @(x,u,Ts) [x(2); x(3)];
-controller.Ts = .1;
-controller.PredictionHorizon = 50;
-controller.PredictionHorizon = 10;
-controller.Model.NumberOfParameters = 0;
-controller.Optimization.RunAsLinearMPC = 'Adaptive';
-controller.Optimization.ReplaceStandardCost = false;
+% controller = nlmpc(3,3,2); % npy 2 or 3?
+% controller.Model.StateFcn = "unicycleDynamics";
+% controller.Model.OutputFcn = @(x,u,Ts) [x(1); x(2); x(3)];
+% controller.Ts = 1;
+% controller.PredictionHorizon = 5;
+% controller.Model.NumberOfParameters = 0;
+% controller.Optimization.RunAsLinearMPC = 'off';
+% controller.Optimization.ReplaceStandardCost = false;
 % Control Constraints
-controller.ManipulatedVariables(1).Name = "uw"; 
-controller.ManipulatedVariables(1).Min = -pi/2;
-controller.ManipulatedVariables(1).Max = pi/2;
-controller.ManipulatedVariables(1).RateMin= -.25;
-controller.ManipulatedVariables(1).RateMax= .25;
-controller.ManipulatedVariables(2).Name = "uv";
-controller.ManipulatedVariables(2).Min = 0;
-controller.ManipulatedVariables(2).Max = .1;
-controller.ManipulatedVariables(2).RateMin= -.2;
-controller.ManipulatedVariables(2).RateMax= .2;
+% controller.ManipulatedVariables(1).Name = "uw"; 
+% controller.ManipulatedVariables(1).Min = -pi/2;
+% controller.ManipulatedVariables(1).Max = pi/2;
+% controller.ManipulatedVariables(1).RateMin= -.25;
+% controller.ManipulatedVariables(1).RateMax= .25;
+% controller.ManipulatedVariables(2).Name = "uv";
+% controller.ManipulatedVariables(2).Min = 0;
+% controller.ManipulatedVariables(2).Max = .1;
+% controller.ManipulatedVariables(2).RateMin= -.2;
+% controller.ManipulatedVariables(2).RateMax= .2;
+% 
+% controller.Weights.ManipulatedVariables = [1 1];
+% validateFcns(controller,x0,u0);
 
-controller.Weights.ManipulatedVariables = [1 1];
