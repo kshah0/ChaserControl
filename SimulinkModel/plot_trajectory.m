@@ -1,10 +1,10 @@
 close all
-data = load("simresults/run1.mat");
+data = load("simresults/makingprogress.mat");
 
 figure(1)
 hold on;
 scatter(rtx,rty)
-scatter(data.run{2}.Values.Data,data.run{3}.Values.Data)
+scatter(reshape(data.run{4}.Values.Data,[length(data.run{4}.Values.Data) 1]),reshape(data.run{5}.Values.Data,[length(data.run{4}.Values.Data) 1]))
 legend("Target","Chaser")
 title("Ground Trajectory")
 xlabel("X")
