@@ -1,0 +1,26 @@
+clear;clc;
+config;
+
+dt_sim = 0.01;
+dt_controller = 0.5;
+tf = 16;
+
+tspan_sim = 0:dt_sim:tf;
+tspan_controller = 0:dt_controller:tf;
+
+options = odeset('RelTol', 1e-9, 'AbsTol', 1e-9);
+
+u_hist = zeros(2,length(tspan_sim)); %make global probs
+xk = x0;
+x_hist = x0;
+for k = 1:length(tspan_controller)-1
+    tspan_ode = tspan_controller(k):dt_sim:tspan_controller(k+1);
+    [~,x] = ode45(@dynamics,tspan_ode,xk,options);
+    x_hist(:,k) = [x_hist, x];
+    xk = x(:,end);
+end
+
+
+
+% Plot graphs
+plot_trajectory;

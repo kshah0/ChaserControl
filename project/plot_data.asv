@@ -1,0 +1,17 @@
+figure
+subplot 211
+plot(tspan(1:length(tspan)-1),u_hist(1,:));
+ylabel("u_\omega")
+title("Control")
+subplot 212
+plot(tspan(1:length(tspan)-1),u_hist(2,:));
+ylabel("u_s")
+xlabel("time (s)");
+
+figure
+subplot 311
+plot(tspan(1:length(tspan)),rtt,tspan(1:length(tspan)),x_hist(1,:),'LineWidth',2)
+subplot 312
+plot(tspan(1:length(tspan)),rtx,tspan(1:length(tspan)),x_hist(2,:),'LineWidth')
+subplot 313
+plot(tspan(1:length(tspan)),rty,tspan(1:length(tspan)),x_hist(3,:),'LineWidth')
