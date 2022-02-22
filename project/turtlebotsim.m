@@ -1,12 +1,12 @@
 clear;clc;
 %% Configuration
 %Initial Chaser State
-x0 = [0;0;0];
+x0 = [pi/2;0;0.2];
 u0 = [0;0];
 %Target Trajectory
 rty = [1:.2/400:1.2,1.2*ones(1,100+400+99),1.2:.2/600:1.4]'-.9*ones(1601,1);
 rtx = [ones(1,400+100),1.0:.2/400:1.2,1.2*ones(1,600+100)]'-.9*ones(1601,1);
-rtt = [zeros(1,400), 0:pi/200:pi/2, pi/2*ones(1,399), pi/2:-pi/200:0, zeros(1,600)]';
+rtt = [pi/2*ones(1,400), pi/2:-pi/200:0, zeros(1,399), 0:pi/200:pi/2, pi/2*ones(1,600)]';
 refTraj = [rtt rtx rty];
 
 %Sim/Controller Rates
@@ -40,6 +40,12 @@ for k = 1:length(tspan_controller)-1
     x_hist = [x_hist, x(1:end-1,:)'];
     u_hist = [u_hist, u.*ones(2,ovsf)];
     xk = x(end,:)';
+    disp(string(x_target_kpn(2) - xk(2)) + ", " + string(x_target_kpn(3) - xk(3)))
+    %disp(xk(2) + ", " + xk(3))
+    if abs(x_target_kpn(2) - xk(2)) < 0.01 && abs(x_target_kpn(3) - xk(3)) < 0.01
+        disp("Target Hit!")
+        break
+    end
 end
 
 
