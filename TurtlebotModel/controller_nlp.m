@@ -1,4 +1,4 @@
-function u = controller4(x_chaser_k,x_target_kpN,N,dt)
+function u  = controller_nlp(x_chaser_k,x_target_kpN,N,dt)
 type objfunx
 u = optimvar('u',2*N);
 x_chaser = optimvar('x_chaser',3*N);
@@ -27,12 +27,13 @@ prob.Constraints.uw_top = u(1:2:end,1) <= pi/2;
 x0.u = zeros(2*N,1);
 x0.x_chaser = reshape(x_chaser_k.*ones(3,N), [3*N 1]);
 
-show(prob)
+%opts = optimoptions('fmincon', 'Display', 'off');
 
+%show(prob)
 [sol,~] = solve(prob,x0);
 
 u = reshape(sol.u,[2,N]);
-u = u(:,1);
+%u = u(:,1);
 
 
 
