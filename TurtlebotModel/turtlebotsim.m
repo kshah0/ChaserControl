@@ -1,15 +1,15 @@
 clear;clc;
 %% Configuration
 %Initial Chaser State
-x0 = [7/8*pi;0;0];
+x0 = [pi;0;0];
 u0 = [0;0];
 
 %Target Trajectory
 load_target_trajectory_theta;
 
 %Sim/Controller Rates
-dt_opt = 1;
-dt_controller = 0.05;
+dt_opt = 4;
+dt_controller = 0.08;
 dt_sim = 0.01;
 tf = 16;
 
@@ -39,12 +39,14 @@ for k = 1:length(tspan_opt)-1
     % Find the location of the target robot
     if tspan_opt(k) + N*dt_controller < tf %tspan_controller((k-1)*floor(dt_opt/dt_controller) + N) <= tf
         x_target_kpn = interp1(tspan_target,refTraj,tspan_opt(k) + N*dt_controller)';%tspan_controller((k-1)*floor(dt_opt/dt_controller) + N))';
+        x_target = interp1(tspan_target,refTraj,(tspan_opt(k)):dt_controller:(tspan_opt(k) + N*dt_controller))';
     else
         x_target_kpn = interp1(tspan_sim,refTraj,tspan_sim(end))';
+        x_target = x_target_kpn.*ones(3,N);
     end
     % Run controller to find u
     
-    u = controller_nlp(xk,x_target_kpn,N,dt_controller);
+    u = controller_nlp_icost(xk,x_target,N,dt_controller);
     
     xc = xk;
     for c = 1:length(tspan_controller)-1

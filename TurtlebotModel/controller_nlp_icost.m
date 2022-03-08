@@ -1,16 +1,16 @@
-function u  = controller_nlp(x_chaser_k,x_target_kpN,N,dt)
-type objfunx_endpos
+function u  = controller_nlp_icost(x_chaser_k,x_target,N,dt)
+type objfunx_fullpos;
 u = optimvar('u',2*N);
-x_chaser = optimvar('x_chaser',3*N);
+x_chaser = optimvar('x_chaser',3*(N+1));
 % Matrix to elimate use of theta in cost function
 Q = [0.00,0,0;0,100,0;0,0,100];
-obj = objfunx_endpos(x_chaser(end-2:end,1),Q,x_target_kpN);
+obj = objfunx_fullpos(x_chaser,Q,x_target);
 prob = optimproblem('Objective',obj);
 
 % Constraints
 %x_chaser(:,1) = x_chaser_k;
 dyn = x_chaser(1:3,1) == x_chaser_k;
-for n = 1:N-1
+for n = 1:N
 %     B = [1, 0;                
 %          0, cos(x_chaser(1,n));
 %          0, sin(x_chaser(1,n))];
@@ -24,8 +24,14 @@ prob.Constraints.us_bot = u(2:2:end,1) >= 0.0;
 prob.Constraints.uw_bot = u(1:2:end,1) >= -pi/2;
 prob.Constraints.uw_top = u(1:2:end,1) <= pi/2;
 
+for i = 1:N+1
+    x0.x_chaser(3*i-2,1) = x_chaser_k(1);
+    x0.x_chaser(3*i-1,1) = x_chaser_k(2);
+    x0.x_chaser(3*i,1) = x_chaser_k(3);
+end
+
 x0.u = zeros(2*N,1);
-x0.x_chaser = reshape(x_chaser_k.*ones(3,N), [3*N 1]);
+%x0.x_chaser = reshape(x_chaser_k.*ones(3,N), [3*(N+1) 1]);
 
 %opts = optimoptions('fmincon', 'Display', 'off');
 

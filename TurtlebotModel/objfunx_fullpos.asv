@@ -1,0 +1,9 @@
+function J = objfunx_fullpos(x_chaser,Q, x_target)
+
+x_chaser = reshape(x_chaser,[3,length(x_chaser/3)]);
+
+J = 0;
+for k = 1:length(x_chaser(1,:))
+    J = J + (x_target(:,k) - x_chaser)' * Q * (x_target - x_chaser);
+end
+end
