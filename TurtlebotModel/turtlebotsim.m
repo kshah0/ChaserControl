@@ -9,7 +9,7 @@ load_target_trajectory_theta;
 
 %Sim/Controller Rates
 dt_opt = 1;
-dt_controller = 0.02;
+dt_controller = 0.05;
 dt_sim = 0.01;
 tf = 16;
 
@@ -24,20 +24,21 @@ end
 %% Generate & Run Simulation
 ovsf = dt_controller/dt_sim; %oversampling factor
 tspan_sim = 0:dt_sim:tf;
-tspan_controller = 0:dt_controller:tf;
+tspan_controller = 0:dt_controller:dt_opt;
 tspan_opt = 0:dt_opt:tf;
+tspan_ode = 0:dt_sim:dt_controller;
 
 options = odeset('RelTol', 1e-9, 'AbsTol', 1e-9);
 
 xk = x0;
-u_hist = []; %make global probs
+u_hist = [];
 x_hist = [];
 for k = 1:length(tspan_opt)-1
     %tspan_ode = tspan_controller(k):dt_sim:tspan_controller(k+1);
 
     % Find the location of the target robot
-    if tspan_controller((k-1)*floor(dt_opt/dt_controller) + N) <= tf
-        x_target_kpn = interp1(tspan_sim,refTraj,tspan_controller((k-1)*floor(dt_opt/dt_controller) + N))';
+    if tspan_opt(k) + N*dt_controller < tf %tspan_controller((k-1)*floor(dt_opt/dt_controller) + N) <= tf
+        x_target_kpn = interp1(tspan_target,refTraj,tspan_opt(k) + N*dt_controller)';%tspan_controller((k-1)*floor(dt_opt/dt_controller) + N))';
     else
         x_target_kpn = interp1(tspan_sim,refTraj,tspan_sim(end))';
     end
@@ -46,8 +47,8 @@ for k = 1:length(tspan_opt)-1
     u = controller_nlp(xk,x_target_kpn,N,dt_controller);
     
     xc = xk;
-    for c = 1:floor(dt_opt/dt_controller)
-        tspan_ode = 0:dt_sim:dt_controller;%tspan_controller(c):dt_sim:tspan_controller(c+1);
+    for c = 1:length(tspan_controller)-1
+        %tspan_controller(c):dt_sim:tspan_controller(c+1);
 
         [~,x] = ode45(@dynamics,tspan_ode,xc,options,u(:,c));
         x_hist = [x_hist, x(1:end-1,:)'];

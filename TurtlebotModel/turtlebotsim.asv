@@ -15,7 +15,7 @@ tf = 16;
 
 %MPC configuration
 
-N = 20; % MPC predicition horizon
+N = 50; % MPC predicition horizon
 
 if(N*dt_controller < dt_opt)
     error("Error: control horizon insufficient for optimizer (too short)");
@@ -26,18 +26,19 @@ ovsf = dt_controller/dt_sim; %oversampling factor
 tspan_sim = 0:dt_sim:tf;
 tspan_controller = 0:dt_controller:dt_opt;
 tspan_opt = 0:dt_opt:tf;
+tspan_ode = 0:dt_sim:dt_controller;
 
 options = odeset('RelTol', 1e-9, 'AbsTol', 1e-9);
 
 xk = x0;
 u_hist = []; %make global probs
-x_hist = x0;
+x_hist = [];
 for k = 1:length(tspan_opt)-1
     %tspan_ode = tspan_controller(k):dt_sim:tspan_controller(k+1);
 
     % Find the location of the target robot
-    if k*ovsf + N*dt_opt/dt_sim <= length(refTraj(:,1))
-        x_target_kpn = interp1(tspan_sim,refTraj,tspan_sim(ovsf*(k + N)))';
+    if tspan_opt(k+1) < tf %tspan_controller((k-1)*floor(dt_opt/dt_controller) + N) <= tf
+        x_target_kpn = interp1(tspan_target,refTraj,tspan_opt(k) +);%tspan_controller((k-1)*floor(dt_opt/dt_controller) + N))';
     else
         x_target_kpn = interp1(tspan_sim,refTraj,tspan_sim(end))';
     end
@@ -46,8 +47,8 @@ for k = 1:length(tspan_opt)-1
     u = controller_nlp(xk,x_target_kpn,N,dt_controller);
     
     xc = xk;
-    for c = 1:length(tspan_controller)-1
-        tspan_ode = 0:dt_sim:dt_controller;%tspan_controller(c):dt_sim:tspan_controller(c+1);
+    for c = 1:length(tspan_controller)
+        %tspan_controller(c):dt_sim:tspan_controller(c+1);
 
         [~,x] = ode45(@dynamics,tspan_ode,xc,options,u(:,c));
         x_hist = [x_hist, x(1:end-1,:)'];
@@ -68,6 +69,7 @@ for k = 1:length(tspan_opt)-1
 %         break
 %     end
 end
+x_hist = [x_hist, x(end,:)'];
 
 
 
