@@ -18,6 +18,6 @@ cvx_begin quiet
 
 cvx_end
 
-u = u_mat(:,1);
+u = u_mat;
 
 end

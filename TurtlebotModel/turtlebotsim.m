@@ -1,4 +1,5 @@
 clear;clc;
+
 %% Configuration
 %Initial Chaser State
 x0 = [pi;0;0];
@@ -8,14 +9,14 @@ u0 = [0;0];
 load_target_trajectory_theta;
 
 %Sim/Controller Rates
-dt_opt = 4;
-dt_controller = 0.08;
+dt_opt = 1;
+dt_controller = 0.2;
 dt_sim = 0.01;
 tf = 16;
 
 %MPC configuration
 
-N = 50; % MPC predicition horizon
+N = 10; % MPC predicition horizon
 
 if(N*dt_controller < dt_opt)
     error("Error: control horizon insufficient for optimizer (too short)");
@@ -45,8 +46,8 @@ for k = 1:length(tspan_opt)-1
         x_target = x_target_kpn.*ones(3,N);
     end
     % Run controller to find u
-    
-    u = controller_nlp_icost(xk,x_target,N,dt_controller);
+
+    u = controller_cvx_icost(xk,x_target,N,dt_controller);
     
     xc = xk;
     for c = 1:length(tspan_controller)-1
