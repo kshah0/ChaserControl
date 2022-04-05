@@ -3,6 +3,8 @@ from scipy.interpolate import interp1d
 from scipy.integrate import odeint
 from dynamics import dynamics
 from test_controller import test_controller
+from controllers import cvx_controller
+import matplotlib.pyplot as plt
 
 #Chaser initial state
 x0c = np.array([np.pi,0,0])
@@ -49,8 +51,8 @@ for k in range(len(tspan_opt)-1):
     else:
         x_target = (target_state(tspan_opt[-1])*np.ones((N,3))).T
     
-    uk = test_controller(xk, x_target,N,dt_ctrl)
-
+    uk = cvx_controller(xk, x_target,N,dt_ctrl)
+    
     xc = xk
     for c in range(len(tspan_ctrl)-1):
         #ODE45 call here
@@ -63,4 +65,10 @@ for k in range(len(tspan_opt)-1):
     xk = xc
 #append final state vector to x_hist
 np.concatenate((x_hist,np.array([xk])))
+#import pdb; pdb.set_trace()
 #plot stuff
+plt.figure(figsize=[8,5])
+plt.scatter(x_hist.T[:][1],x_hist.T[:][2])
+plt.scatter(target_state(tspan_sim)[:][1],target_state(tspan_sim)[:][2])
+plt.axis('equal')
+plt.show()

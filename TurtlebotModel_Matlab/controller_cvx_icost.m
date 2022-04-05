@@ -7,7 +7,7 @@ B_bar = [1, 0
 % Matrix to elimate use of theta in cost function
 Q = [0.00,0,0;0,1,0;0,0,1];
 
-target_angle_I = atan2(x_target(3,:)-x_chaser_k(3)*ones(1,length(x_target)),x_target(2,:)-x_chaser_k(2)*ones(1,length(x_target)));
+target_angle_I = atan2(x_target(3,:)-x_chaser_k(3)*ones(1,length(x_target)), x_target(2,:)-x_chaser_k(2)*ones(1,length(x_target)));
 
 cvx_begin quiet
     variable u_mat(2,N)

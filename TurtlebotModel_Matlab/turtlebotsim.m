@@ -46,9 +46,9 @@ for k = 1:length(tspan_opt)-1
         x_target = x_target_kpn.*ones(3,N);
     end
     % Run controller to find u
-
+    b4cvx=clock;
     u = controller_cvx_icost(xk,x_target,N,dt_controller);
-    
+    clock-b4cvx
     xc = xk;
     for c = 1:length(tspan_controller)-1
         %tspan_controller(c):dt_sim:tspan_controller(c+1);
