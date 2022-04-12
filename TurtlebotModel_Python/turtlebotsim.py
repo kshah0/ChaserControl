@@ -3,7 +3,7 @@ from scipy.interpolate import interp1d
 from scipy.integrate import odeint
 from dynamics import dynamics
 from test_controller import test_controller
-from controllers import cvx_controller
+from controllers import cvx_controller, cvx_controller_predict
 import matplotlib.pyplot as plt
 
 #Chaser initial state
@@ -25,13 +25,15 @@ target_state = interp1d(t_ref, rtraj.T)
 #Time step for the simulation
 dt_sim = 0.01
 #Time duration for ZOH controller commands
-dt_ctrl = .2
+dt_ctrl = .1
 #Time duration between reoptimizing
-dt_opt = 1.0
+dt_opt = 2.0
+
+weight = .6
 
 ovsf = int(dt_ctrl/dt_sim)
 
-N = 10
+N = 20
 if(N*dt_ctrl < dt_opt):
     print("Error: control horizon insufficient for optimizer")
     quit()
@@ -45,6 +47,9 @@ tspan_ode = np.arange(0,dt_ctrl, dt_sim)
 xk = x0c
 x_hist = np.empty((0,3))
 u_hist = np.empty((0,2))
+
+u_prev = u0c
+
 for k in range(len(tspan_opt)):
     
     if(tspan_opt[k] + N*dt_ctrl < tf):
@@ -53,15 +58,17 @@ for k in range(len(tspan_opt)):
     else:
         x_target = (target_state(tspan_opt[-1])*np.ones((N,3))).T
     
-    uk = cvx_controller(xk, x_target,N,dt_ctrl)
+    uk = cvx_controller_predict(xk, x_target,N,dt_ctrl)
+    
     xc = xk
     for c in range(len(tspan_ctrl)):
+        u_prev = (1-weight)*u_prev + weight*uk[c]
         #ODE45 call here
-        x_ode = odeint(dynamics,xc,tspan_ode,args = (uk[c],))
+        x_ode = odeint(dynamics,xc,tspan_ode,args = (u_prev,))
         # import pdb;pdb.set_trace()
 
         x_hist = np.concatenate((x_hist,x_ode))
-        u_hist = np.concatenate((u_hist,uk[c]*np.ones((ovsf,2))))
+        u_hist = np.concatenate((u_hist,u_prev*np.ones((ovsf,2))))
         xc = x_ode[-1]
         #Append xhist and u hist
         #xc = x(end,:)
