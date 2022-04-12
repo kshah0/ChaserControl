@@ -7,7 +7,7 @@ from controllers import cvx_controller
 import matplotlib.pyplot as plt
 
 #Chaser initial state
-x0c = np.array([np.pi/2,0.0,0.0])
+x0c = np.array([np.pi,0.0,0.0])
 u0c = np.array([0,0])
 
 #Define reference trajectory
@@ -102,4 +102,7 @@ plt.plot(tspan_sim,u_hist[:,1])
 plt.ylabel("u_s")
 plt.xlabel("Time (s)")
 
-plt.show()
+plt.show(block=False)
+plt.pause(0.1) # Pause for interval seconds.
+input("hit[enter] to end.")
+plt.close('all')

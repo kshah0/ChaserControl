@@ -33,7 +33,7 @@ def cvx_controller(x_chaser_k, x_target, N, dt):
         constr += [x_chaser[:,t+1] == x_chaser[:,t] + dt*B_bar@u_mat[:,t],
                   u_mat[0,t]<=uw_max, u_mat[0,t]>=-uw_max,
                   u_mat[1,t]<=us_max, u_mat[1,t]>=0,
-                  (u_mat[0,t]/us_max)**2 + (u_mat[1,t]/uw_max)**2 <= np.sqrt(2)]
+                  (u_mat[0,t]/uw_max)**2 + (u_mat[1,t]/us_max)**2 <= np.sqrt(2)]
     
     prob = cvx.Problem(obj, constr)
     result = prob.solve()
