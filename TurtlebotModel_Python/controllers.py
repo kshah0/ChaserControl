@@ -1,4 +1,4 @@
-from turtle import pd
+# from turtle import pd
 import numpy as np
 import cvxpy as cvx
 
