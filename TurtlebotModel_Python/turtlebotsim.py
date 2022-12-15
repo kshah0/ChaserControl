@@ -7,7 +7,7 @@ from controllers import cvx_controller, cvx_controller_predict
 import matplotlib.pyplot as plt
 
 #Def Circle
-rc = .1
+rc = .25
 cx = .2
 cy = .2
 Tc = 15 #sec
@@ -22,8 +22,8 @@ dt_ref = .1
 x0t = np.array([np.pi/2,0.1,0.1])
 # t_ref = np.array([0,4,5,9,10,tf])
 # tt = np.array([x0t[0], x0t[0], x0t[0]-np.pi/2,x0t[0]-np.pi/2,x0t[0],x0t[0]])
-# xt = np.array([x0t[1], x0t[1], x0t[1],x0t[1]+.2,x0t[1]+.2,x0t[1]+.2])
-# yt = np.array([x0t[2], x0t[2]+.2, x0t[2]+.2,x0t[2]+.2,x0t[2]+.2,x0t[2]+.5])
+# xt = (90/50)*np.array([x0t[1], x0t[1], x0t[1],x0t[1]+.2,x0t[1]+.2,x0t[1]+.2])
+# yt = (90/50)*np.array([x0t[2], x0t[2]+.2, x0t[2]+.2,x0t[2]+.2,x0t[2]+.2,x0t[2]+.5])
 t_ref = np.arange(0,tf+dt_ref,dt_ref)
 tt = np.array([])
 xt = np.array([])
@@ -95,9 +95,10 @@ for k in range(len(tspan_opt)):
 # import pdb; pdb.set_trace()
 #plot stuff
 plt.figure(figsize=[8,5])
-plt.scatter(x_hist.T[:][1],x_hist.T[:][2])
 plt.scatter(target_state(tspan_sim)[:][1],target_state(tspan_sim)[:][2])
+plt.scatter(x_hist.T[:][1],x_hist.T[:][2])
 plt.axis('equal')
+plt.legend(["Evader", "Pursuer"])
 
 # import pdb; pdb.set_trace()
 plt.figure(figsize=[8,5])

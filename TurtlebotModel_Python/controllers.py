@@ -7,8 +7,9 @@ def cvx_controller(x_chaser_k, x_target, N, dt):
     B_bar = np.array([[1.0, 0.0],
                       [0.0, np.cos(x_chaser_k[0])],
                       [0.0, np.sin(x_chaser_k[0])]])
-    Q = np.diag([0.0, 1.0, 1.0])
-    R = 2
+    Q = np.diag([0.0, 5.0, 5.0])
+    R = 1
+    S = np.diag([0, 0.75])
     
     uw_max = np.pi/2
     us_max = .15
@@ -23,6 +24,8 @@ def cvx_controller(x_chaser_k, x_target, N, dt):
         J += cvx.sum_squares(Q@(x_target[:,n]-x_chaser[:,n]))
         
         J += R*(ref_angle_I[0,n] - x_chaser[0,n])**2
+
+        J+= cvx.sum_squares(S@u_mat[:,n])
         
     obj = cvx.Minimize(J)
     
@@ -33,7 +36,7 @@ def cvx_controller(x_chaser_k, x_target, N, dt):
         # import pdb;pdb.set_trace()
         constr += [x_chaser[:,t+1] == x_chaser[:,t] + dt*B_bar@u_mat[:,t],
                   u_mat[0,t]<=uw_max, u_mat[0,t]>=-uw_max,
-                  u_mat[1,t]<=us_max, u_mat[1,t]>=0,
+                  u_mat[1,t]<=us_max, u_mat[1,t]>=-us_max,
                   (u_mat[0,t]/uw_max)**2 + (u_mat[1,t]/us_max)**2 <= np.sqrt(2)]
     
     prob = cvx.Problem(obj, constr)
@@ -56,8 +59,9 @@ def cvx_controller_predict(x_chaser_k, x_target, N, dt):
     B_bar = np.array([[1.0, 0.0],
                       [0.0, np.cos(x_chaser_k[0])],
                       [0.0, np.sin(x_chaser_k[0])]])
-    Q = np.diag([0.0, 1.0, 1.0])
-    R = 2
+    Q = np.diag([0.0, 3.0, 3.0])
+    R = 1
+    S = np.diag([0, 0.6])
     
     uw_max = np.pi/2
     us_max = .15
@@ -72,6 +76,8 @@ def cvx_controller_predict(x_chaser_k, x_target, N, dt):
         J += cvx.sum_squares(Q@(x_target[:,n]-x_chaser[:,n]))
         
         J += R*(ref_angle_I[0,n] - x_chaser[0,n])**2
+
+        J+= cvx.sum_squares(S@u_mat[:,n])
         
     obj = cvx.Minimize(J)
     
@@ -82,7 +88,7 @@ def cvx_controller_predict(x_chaser_k, x_target, N, dt):
         # import pdb;pdb.set_trace()
         constr += [x_chaser[:,t+1] == x_chaser[:,t] + dt*B_bar@u_mat[:,t],
                   u_mat[0,t]<=uw_max, u_mat[0,t]>=-uw_max,
-                  u_mat[1,t]<=us_max, u_mat[1,t]>=0,
+                  u_mat[1,t]<=us_max, u_mat[1,t]>=-us_max,
                   (u_mat[0,t]/uw_max)**2 + (u_mat[1,t]/us_max)**2 <= np.sqrt(2)]
     
     prob = cvx.Problem(obj, constr)
